@@ -8,11 +8,12 @@ intents = discord.Intents.default()
 intents.presences = True
 intents.members = True
 intents.message_content = True
+
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 WEEKLY_FILE = "weekly_data.json"
 TOTAL_FILE = "total_data.json"
-LEADERBOARD_CHANNEL_ID = 1391240361913094224  # Ganti sesuai channel ID kamu
+LEADERBOARD_CHANNEL_ID = 123456789012345678  # GANTI ke channel ID kamu
 
 # Buat file jika belum ada
 for file in [WEEKLY_FILE, TOTAL_FILE]:
@@ -77,7 +78,7 @@ async def post_leaderboard():
 
     await channel.send(msg)
 
-# ========== COMMANDS ==========
+# === COMMANDS ===
 
 @bot.command(name="obtop")
 async def obtop(ctx):
@@ -90,8 +91,8 @@ async def obtop(ctx):
 
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
     msg = f"{ctx.author.mention}\n**🏆 Top 10 Online Mingguan:**\n"
-    for i, (user_id, minutes) in enumerate(sorted_users[:10], start=1):
-        mention = f"<@{user_id}>"
+    for i, (uid, minutes) in enumerate(sorted_users[:10], start=1):
+        mention = f"<@{uid}>"
         hours = round(minutes / 60, 2)
         msg += f"{i}. {mention} — {hours} jam\n"
 
@@ -108,8 +109,8 @@ async def oball(ctx):
 
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
     msg = f"{ctx.author.mention}\n**📊 Semua Waktu Online Mingguan:**\n"
-    for i, (user_id, minutes) in enumerate(sorted_users, start=1):
-        mention = f"<@{user_id}>"
+    for i, (uid, minutes) in enumerate(sorted_users, start=1):
+        mention = f"<@{uid}>"
         hours = round(minutes / 60, 2)
         msg += f"{i}. {mention} — {hours} jam\n"
 
@@ -118,27 +119,27 @@ async def oball(ctx):
 
 @bot.command(name="obme")
 async def obme(ctx):
-    user_id = str(ctx.author.id)
+    uid = str(ctx.author.id)
     with open(WEEKLY_FILE, "r") as f:
         data = json.load(f)
 
-    minutes = data.get(user_id, 0)
+    minutes = data.get(uid, 0)
     hours = round(minutes / 60, 2)
     await ctx.send(f"{ctx.author.mention}, kamu telah online selama **{hours} jam** minggu ini.")
 
 @bot.command(name="obrank")
 async def obrank(ctx):
-    user_id = str(ctx.author.id)
+    uid = str(ctx.author.id)
     with open(WEEKLY_FILE, "r") as f:
         data = json.load(f)
 
-    if user_id not in data:
+    if uid not in data:
         await ctx.send(f"{ctx.author.mention}, kamu belum memiliki waktu online minggu ini.")
         return
 
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
-    for i, (uid, minutes) in enumerate(sorted_users, start=1):
-        if uid == user_id:
+    for i, (user, minutes) in enumerate(sorted_users, start=1):
+        if user == uid:
             hours = round(minutes / 60, 2)
             await ctx.send(f"{ctx.author.mention}, kamu berada di peringkat **#{i}** dengan waktu online **{hours} jam**.")
             return
@@ -150,7 +151,7 @@ async def obreset(ctx):
         json.dump({}, f)
     await ctx.send(f"{ctx.author.mention} telah mereset leaderboard mingguan.")
 
-# === TOTAL (SEPANJANG MASA) COMMANDS ===
+# === TOTAL DATA ===
 
 @bot.command(name="obtotal")
 async def obtotal(ctx):
@@ -158,13 +159,13 @@ async def obtotal(ctx):
         data = json.load(f)
 
     if not data:
-        await ctx.send(f"{ctx.author.mention}, belum ada data online total.")
+        await ctx.send(f"{ctx.author.mention}, belum ada data total online.")
         return
 
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
-    msg = f"{ctx.author.mention}\n**📈 Top 10 Total Online (Sepanjang Masa):**\n"
-    for i, (user_id, minutes) in enumerate(sorted_users[:10], start=1):
-        mention = f"<@{user_id}>"
+    msg = f"{ctx.author.mention}\n**📈 Top 10 Total Online:**\n"
+    for i, (uid, minutes) in enumerate(sorted_users[:10], start=1):
+        mention = f"<@{uid}>"
         hours = round(minutes / 60, 2)
         msg += f"{i}. {mention} — {hours} jam\n"
 
@@ -172,30 +173,35 @@ async def obtotal(ctx):
 
 @bot.command(name="obmetotal")
 async def obmetotal(ctx):
-    user_id = str(ctx.author.id)
+    uid = str(ctx.author.id)
     with open(TOTAL_FILE, "r") as f:
         data = json.load(f)
 
-    minutes = data.get(user_id, 0)
+    minutes = data.get(uid, 0)
     hours = round(minutes / 60, 2)
     await ctx.send(f"{ctx.author.mention}, total waktu online kamu adalah **{hours} jam**.")
 
 @bot.command(name="obranktotal")
 async def obranktotal(ctx):
-    user_id = str(ctx.author.id)
+    uid = str(ctx.author.id)
     with open(TOTAL_FILE, "r") as f:
         data = json.load(f)
 
-    if user_id not in data:
+    if uid not in data:
         await ctx.send(f"{ctx.author.mention}, kamu belum memiliki waktu online.")
         return
 
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
-    for i, (uid, minutes) in enumerate(sorted_users, start=1):
-        if uid == user_id:
+    for i, (user, minutes) in enumerate(sorted_users, start=1):
+        if user == uid:
             hours = round(minutes / 60, 2)
             await ctx.send(f"{ctx.author.mention}, kamu berada di peringkat total **#{i}** dengan waktu online **{hours} jam**.")
             return
+
+# Command test
+@bot.command(name="test")
+async def test(ctx):
+    await ctx.send("Bot aktif dan siap!")
 
 # Jalankan bot
 bot.run(os.environ["TOKEN"])
