@@ -13,7 +13,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 
 WEEKLY_FILE = "weekly_data.json"
 TOTAL_FILE = "total_data.json"
-LEADERBOARD_CHANNEL_ID = 123456789012345678  # GANTI ke channel ID kamu
+LEADERBOARD_CHANNEL_ID = 1391240361913094224  # GANTI ke channel ID kamu
 
 # Buat file jika belum ada
 for file in [WEEKLY_FILE, TOTAL_FILE]:
