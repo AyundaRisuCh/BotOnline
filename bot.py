@@ -15,6 +15,12 @@ WEEKLY_FILE = "weekly_data.json"
 TOTAL_FILE = "total_data.json"
 LEADERBOARD_CHANNEL_ID = 1391240361913094224  # GANTI ke channel ID kamu
 
+# Format waktu: 120 → 2 jam 0 menit
+def format_time(minutes):
+    hours = minutes // 60
+    mins = minutes % 60
+    return f"{int(hours)} jam {int(mins)} menit"
+
 # Buat file jika belum ada
 for file in [WEEKLY_FILE, TOTAL_FILE]:
     if not os.path.exists(file):
@@ -73,8 +79,8 @@ async def post_leaderboard():
     for i, (user_id, minutes) in enumerate(sorted_users[:10], start=1):
         member = channel.guild.get_member(int(user_id))
         name = member.display_name if member else f"User ID {user_id}"
-        hours = round(minutes / 60, 2)
-        msg += f"{i}. {name} — {hours} jam\n"
+        time_str = format_time(minutes)
+        msg += f"{i}. {name} — {time_str}\n"
 
     await channel.send(msg)
 
@@ -93,8 +99,8 @@ async def obtop(ctx):
     msg = f"{ctx.author.mention}\n**🏆 Top 10 Online Mingguan:**\n"
     for i, (uid, minutes) in enumerate(sorted_users[:10], start=1):
         mention = f"<@{uid}>"
-        hours = round(minutes / 60, 2)
-        msg += f"{i}. {mention} — {hours} jam\n"
+        time_str = format_time(minutes)
+        msg += f"{i}. {mention} — {time_str}\n"
 
     await ctx.send(msg)
 
@@ -111,8 +117,8 @@ async def oball(ctx):
     msg = f"{ctx.author.mention}\n**📊 Semua Waktu Online Mingguan:**\n"
     for i, (uid, minutes) in enumerate(sorted_users, start=1):
         mention = f"<@{uid}>"
-        hours = round(minutes / 60, 2)
-        msg += f"{i}. {mention} — {hours} jam\n"
+        time_str = format_time(minutes)
+        msg += f"{i}. {mention} — {time_str}\n"
 
     for chunk in [msg[i:i+1900] for i in range(0, len(msg), 1900)]:
         await ctx.send(chunk)
@@ -124,8 +130,8 @@ async def obme(ctx):
         data = json.load(f)
 
     minutes = data.get(uid, 0)
-    hours = round(minutes / 60, 2)
-    await ctx.send(f"{ctx.author.mention}, kamu telah online selama **{hours} jam** minggu ini.")
+    time_str = format_time(minutes)
+    await ctx.send(f"{ctx.author.mention}, kamu telah online selama **{time_str}** minggu ini.")
 
 @bot.command(name="obrank")
 async def obrank(ctx):
@@ -140,8 +146,8 @@ async def obrank(ctx):
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
     for i, (user, minutes) in enumerate(sorted_users, start=1):
         if user == uid:
-            hours = round(minutes / 60, 2)
-            await ctx.send(f"{ctx.author.mention}, kamu berada di peringkat **#{i}** dengan waktu online **{hours} jam**.")
+            time_str = format_time(minutes)
+            await ctx.send(f"{ctx.author.mention}, kamu berada di peringkat **#{i}** dengan waktu online **{time_str}**.")
             return
 
 @bot.command(name="obreset")
@@ -166,8 +172,8 @@ async def obtotal(ctx):
     msg = f"{ctx.author.mention}\n**📈 Top 10 Total Online:**\n"
     for i, (uid, minutes) in enumerate(sorted_users[:10], start=1):
         mention = f"<@{uid}>"
-        hours = round(minutes / 60, 2)
-        msg += f"{i}. {mention} — {hours} jam\n"
+        time_str = format_time(minutes)
+        msg += f"{i}. {mention} — {time_str}\n"
 
     await ctx.send(msg)
 
@@ -178,8 +184,8 @@ async def obmetotal(ctx):
         data = json.load(f)
 
     minutes = data.get(uid, 0)
-    hours = round(minutes / 60, 2)
-    await ctx.send(f"{ctx.author.mention}, total waktu online kamu adalah **{hours} jam**.")
+    time_str = format_time(minutes)
+    await ctx.send(f"{ctx.author.mention}, total waktu online kamu adalah **{time_str}**.")
 
 @bot.command(name="obranktotal")
 async def obranktotal(ctx):
@@ -194,8 +200,8 @@ async def obranktotal(ctx):
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
     for i, (user, minutes) in enumerate(sorted_users, start=1):
         if user == uid:
-            hours = round(minutes / 60, 2)
-            await ctx.send(f"{ctx.author.mention}, kamu berada di peringkat total **#{i}** dengan waktu online **{hours} jam**.")
+            time_str = format_time(minutes)
+            await ctx.send(f"{ctx.author.mention}, kamu berada di peringkat total **#{i}** dengan waktu online **{time_str}**.")
             return
 
 # Command test
