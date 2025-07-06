@@ -27,7 +27,7 @@ async def on_ready():
     track_online_time.start()
     weekly_post_and_reset.start()
 
-@tasks.loop(minutes=5)
+@tasks.loop(minutes=1)
 async def track_online_time():
     with open(WEEKLY_FILE, "r") as f:
         weekly = json.load(f)
@@ -38,8 +38,8 @@ async def track_online_time():
         for member in guild.members:
             if member.status == discord.Status.online and not member.bot:
                 uid = str(member.id)
-                weekly[uid] = weekly.get(uid, 0) + 5
-                total[uid] = total.get(uid, 0) + 5
+                weekly[uid] = weekly.get(uid, 0) + 1
+                total[uid] = total.get(uid, 0) + 1
 
     with open(WEEKLY_FILE, "w") as f:
         json.dump(weekly, f)
