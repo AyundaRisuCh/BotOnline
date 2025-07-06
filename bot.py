@@ -7,7 +7,9 @@ import datetime
 intents = discord.Intents.default()
 intents.presences = True
 intents.members = True
+intents.message_content = True  # PENTING!
 bot = commands.Bot(command_prefix="!", intents=intents)
+
 
 DATA_FILE = "data.json"
 LEADERBOARD_CHANNEL_ID = 1391240361913094224  # Ganti dengan ID channel leaderboard kamu
