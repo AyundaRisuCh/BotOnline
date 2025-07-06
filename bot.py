@@ -81,14 +81,14 @@ async def obtop(ctx):
         return
 
     sorted_users = sorted(data.items(), key=lambda x: x[1], reverse=True)
-    msg = "**🏆 Top 10 Online Mingguan:**\n"
+    msg = f"{ctx.author.mention}\n**🏆 Top 10 Online Mingguan:**\n"
     for i, (user_id, minutes) in enumerate(sorted_users[:10], start=1):
-        member = ctx.guild.get_member(int(user_id))
-        name = member.display_name if member else f"User ID {user_id}"
+        mention = f"<@{user_id}>"  # ini akan mention user langsung
         hours = round(minutes / 60, 2)
-        msg += f"{i}. {name} — {hours} jam\n"
+        msg += f"{i}. {mention} — {hours} jam\n"
 
-    await ctx.send(f"{ctx.author.mention}\n{msg}")
+    await ctx.send(msg)
+
 
 # !oball - semua user
 @bot.command(name="oball")
