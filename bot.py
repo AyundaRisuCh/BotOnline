@@ -78,7 +78,7 @@ async def post_leaderboard():
     msg = "**🏆 Leaderboard Online Mingguan:**\n"
     for i, (user_id, minutes) in enumerate(sorted_users[:10], start=1):
         member = channel.guild.get_member(int(user_id))
-        name = member.display_name if member else f"User ID {user_id}"
+        name = member.mention if member else f"<@{user_id}>"
         time_str = format_time(minutes)
         msg += f"{i}. {name} — {time_str}\n"
 
